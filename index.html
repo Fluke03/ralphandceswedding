@@ -1,0 +1,1549 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <base target="_top">
+
+  <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+  <meta name="theme-color" content="#7f8d72">
+
+  <style>
+    /* RESET / GLOBAL */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+    }
+
+    html {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100%;
+      background: #aeb9a1;
+      -webkit-text-size-adjust: 100%;
+      text-size-adjust: 100%;
+    }
+
+    body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      min-height: 100vh;
+      min-height: 100svh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #52604e;
+      background: radial-gradient(
+        circle at 50% 0%,
+        #d2d8c8 0%,
+        #b8c1ac 38%,
+        #a5b098 72%,
+        #96a38a 100%
+      );
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    button,
+    input,
+    select,
+    textarea {
+      font: inherit;
+    }
+
+    button {
+      touch-action: manipulation;
+    }
+
+    /* COLORS */
+    :root {
+      --sage-dark: #4f5d49;
+      --sage-deep: #3f4e39;
+      --sage: #7f8d72;
+      --sage-mid: #909e80;
+      --sage-light: #aeb9a1;
+      --sage-pale: #e1e6db;
+      --cream: #faf8f1;
+      --cream-dark: #eeeadd;
+      --gold: #c8a45c;
+      --gold-dark: #a98542;
+      --gold-light: #e2cc91;
+      --text: #52604e;
+      --text-light: #788274;
+      --white: #ffffff;
+    }
+
+    /* MAIN PAGE */
+    .page {
+      position: relative;
+      z-index: 5;
+      width: 100%;
+      min-height: 100vh;
+      min-height: 100svh;
+      padding: 24px 14px 50px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* FALLING LEAVES */
+    .leaf-container {
+      position: fixed;
+      inset: 0;
+      z-index: 1;
+      pointer-events: none;
+      overflow: hidden;
+    }
+
+    .leaf {
+      position: absolute;
+      top: -50px;
+      width: 12px;
+      height: 19px;
+      border-radius: 100% 0 100% 0;
+      opacity: .5;
+      filter: blur(.15px);
+      animation:
+        leafFall linear infinite,
+        leafSwing ease-in-out infinite alternate;
+    }
+
+    @keyframes leafFall {
+      0% {
+        transform: translate3d(0, -60px, 0) rotate(0deg);
+        opacity: 0;
+      }
+      10% {
+        opacity: .55;
+      }
+      90% {
+        opacity: .4;
+      }
+      100% {
+        transform: translate3d(0, 115vh, 0) rotate(420deg);
+        opacity: 0;
+      }
+    }
+
+    @keyframes leafSwing {
+      from {
+        margin-left: -22px;
+      }
+      to {
+        margin-left: 22px;
+      }
+    }
+
+    /* RSVP CARD */
+    .rsvp-card {
+      position: relative;
+      z-index: 5;
+      width: min(820px, 100%);
+      margin: 0 auto;
+      padding: clamp(34px, 5vw, 58px)
+               clamp(18px, 5vw, 56px)
+               clamp(40px, 5vw, 62px);
+      background: linear-gradient(
+        145deg,
+        rgba(255,255,255,.97),
+        rgba(248,246,238,.98)
+      );
+      border: 1px solid rgba(200,164,92,.72);
+      border-radius: clamp(20px, 4vw, 30px);
+      box-shadow:
+        0 25px 60px rgba(63,73,57,.20),
+        0 8px 20px rgba(63,73,57,.10);
+      text-align: center;
+    }
+
+    .rsvp-card::before {
+      content: "";
+      position: absolute;
+      inset: 5px;
+      border: 1px solid rgba(200,164,92,.18);
+      border-radius: inherit;
+      pointer-events: none;
+    }
+
+    /* BOTANICAL ORNAMENT */
+    .ornament {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 10px;
+    }
+
+    .ornament-line {
+      width: clamp(35px, 10vw, 80px);
+      height: 1px;
+      background: var(--gold);
+      opacity: .75;
+    }
+
+    .ornament-leaf {
+      font-size: clamp(24px, 6vw, 32px);
+      color: var(--sage-dark);
+      transform: rotate(-8deg);
+    }
+
+    /* TITLE / LOGO */
+    .rsvp-title {
+      display: block;
+      width: min(380px, 88vw);
+      height: auto;
+      max-width: 100%;
+      margin: 0 auto;
+      padding: 0;
+      line-height: 0;
+      object-fit: contain;
+    }
+
+    .rsvp-subtitle {
+      margin: 13px 0 0;
+      font-family: Georgia, "Times New Roman", serif;
+      font-style: italic;
+      font-size: clamp(16px, 4vw, 20px);
+      color: #687563;
+      letter-spacing: .5px;
+    }
+
+    .heart {
+      display: block;
+      margin: 18px 0 28px;
+      color: var(--gold);
+      font-size: 28px;
+      line-height: 1;
+    }
+
+    /* FORM */
+    .form-wrapper {
+      width: 100%;
+      max-width: 650px;
+      margin: 0 auto;
+      text-align: left;
+    }
+
+    .form-group {
+      margin-bottom: clamp(20px, 4vw, 25px);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 8px;
+      font-size: clamp(15px, 4vw, 18px);
+      line-height: 1.35;
+      color: #586653;
+      font-weight: normal;
+    }
+
+    .helper-text {
+      margin-top: 8px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 14px;
+      line-height: 1.45;
+      font-style: italic;
+      color: #879080;
+    }
+
+    /* INPUTS */
+    input[type="text"],
+    select,
+    textarea {
+      display: block;
+      width: 100%;
+      min-width: 0;
+      border: 1px solid #c8cdbf;
+      background: rgba(255,255,255,.82);
+      color: #4f5d49;
+      border-radius: 14px;
+      padding: 15px 16px;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 16px;
+      line-height: 1.3;
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      transition:
+        border-color .2s ease,
+        box-shadow .2s ease,
+        background .2s ease;
+    }
+
+    input[type="text"] {
+      min-height: 56px;
+    }
+
+    select {
+      min-height: 56px;
+      padding-right: 42px;
+      background-image:
+        linear-gradient(
+          45deg,
+          transparent 50%,
+          #65715f 50%
+        ),
+        linear-gradient(
+          135deg,
+          #65715f 50%,
+          transparent 50%
+        );
+      background-position:
+        calc(100% - 20px) 24px,
+        calc(100% - 14px) 24px;
+      background-size: 6px 6px, 6px 6px;
+      background-repeat: no-repeat;
+    }
+
+    textarea {
+      min-height: 115px;
+      resize: vertical;
+      line-height: 1.5;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: #a0a79d;
+      opacity: 1;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      border-color: var(--sage);
+      background: #ffffff;
+      box-shadow: 0 0 0 4px rgba(127,141,114,.13);
+    }
+
+    /* MAIN BUTTON */
+    .main-button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      min-height: 56px;
+      padding: 14px 18px;
+      border: none;
+      border-radius: 40px;
+      background: linear-gradient(135deg, #879577, #718066);
+      color: white;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(13px, 3.5vw, 15px);
+      letter-spacing: clamp(3px, 1vw, 6px);
+      font-weight: normal;
+      cursor: pointer;
+      box-shadow:
+        0 9px 20px rgba(76,91,67,.20),
+        inset 0 1px rgba(255,255,255,.25);
+      transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        filter .2s ease;
+    }
+
+    .main-button:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.04);
+      box-shadow: 0 13px 28px rgba(76,91,67,.27);
+    }
+
+    .main-button:active {
+      transform: scale(.985);
+    }
+
+    .main-button:disabled {
+      background: #b8beb1;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* CANVA INVITATION BUTTON */
+    .invitation-button {
+      display: none;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 650px;
+      min-height: 56px;
+      margin: 16px auto 0;
+      padding: 14px 18px;
+      border: 1px solid rgba(200,164,92,.72);
+      border-radius: 40px;
+      background: linear-gradient(135deg, #e3c887, #b99655);
+      color: #3f4938;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(13px, 3.5vw, 15px);
+      letter-spacing: clamp(2px, .8vw, 4px);
+      font-weight: normal;
+      text-decoration: none;
+      cursor: pointer;
+      box-shadow:
+        0 9px 20px rgba(76,91,67,.18),
+        inset 0 1px rgba(255,255,255,.65);
+      transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        filter .2s ease;
+    }
+
+    .invitation-button:hover {
+      transform: translateY(-2px);
+      filter: brightness(1.04);
+      box-shadow: 0 13px 28px rgba(76,91,67,.25);
+    }
+
+    .invitation-button:active {
+      transform: scale(.985);
+    }
+
+    /* RSVP STEP */
+    #rsvpStep {
+      margin-top: 10px;
+    }
+
+    #seatMessage {
+      width: 100%;
+      padding: 15px 16px;
+      margin: 0 0 25px;
+      border-radius: 14px;
+      background: #edf1e9;
+      border: 1px solid #d5dccd;
+      color: #65715f;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(19px, 4.5vw, 23px);
+      line-height: 1.5;
+    }
+
+
+
+    /* PERSONALIZED ROLE GREETING */
+    #roleGreeting {
+      display: none;
+      width: 100%;
+      margin: 0 auto 22px;
+      padding: 8px 10px;
+      text-align: center;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(27px, 6vw, 42px);
+      line-height: 1.25;
+      font-weight: normal;
+      color: var(--sage-dark);
+      text-wrap: balance;
+    }
+
+    @media (max-width: 480px) {
+      #roleGreeting {
+        font-size: clamp(25px, 7vw, 34px);
+        margin-bottom: 18px;
+      }
+    }
+
+    /* ADDITIONAL GUESTS */
+    #additionalGuestsContainer h3 {
+      margin: 25px 0 18px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(18px, 5vw, 22px);
+      line-height: 1.3;
+      font-weight: normal;
+      color: var(--sage-dark);
+    }
+
+    /* STATUS MESSAGE */
+    .message {
+      width: 100%;
+      max-width: 650px;
+      margin: 22px auto 0;
+      padding: 14px 16px;
+      border-radius: 14px;
+      display: none;
+      font-size: 14px;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+    .error {
+      display: block;
+      background: #f6e5e4;
+      color: #8a5c5a;
+      border: 1px solid #e8c7c5;
+    }
+
+    .success {
+      display: block;
+      background: #e5ecdf;
+      color: #5b6b54;
+      border: 1px solid #cad8c2;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    /* 3D CURTAIN INTRO */
+    #curtainScreen {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      width: 100%;
+      height: 100vh;
+      height: 100svh;
+      min-height: 100dvh;
+      overflow: hidden;
+      perspective: 1400px;
+      background: radial-gradient(
+        ellipse at center,
+        #aeb9a0 0%,
+        #89967c 55%,
+        #64715c 100%
+      );
+    }
+
+    .curtain-backdrop {
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(
+        ellipse at center,
+        rgba(239,238,216,.95) 0%,
+        rgba(164,174,145,.84) 42%,
+        rgba(75,88,67,.90) 100%
+      );
+      box-shadow: inset 0 0 120px rgba(25,35,25,.4);
+    }
+
+    /* CURTAIN PANELS */
+    .curtain {
+      position: absolute;
+      top: -3%;
+      width: 55%;
+      height: 108%;
+      z-index: 5;
+      overflow: hidden;
+      transform-style: preserve-3d;
+      transition:
+        transform 1.9s cubic-bezier(.77,0,.18,1),
+        filter 1.9s ease;
+    }
+
+    .curtain::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: repeating-linear-gradient(
+        90deg,
+        rgba(255,255,255,.09) 0px,
+        rgba(255,255,255,.09) 5px,
+        rgba(0,0,0,.09) 14px,
+        rgba(0,0,0,.09) 23px,
+        rgba(255,255,255,.06) 34px
+      );
+      mix-blend-mode: overlay;
+      opacity: .65;
+    }
+
+    .curtain::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        90deg,
+        #34412f 0%,
+        #647359 8%,
+        #3f4d39 16%,
+        #7d8d70 25%,
+        #3d4a36 34%,
+        #7f8e72 44%,
+        #3a4835 53%,
+        #75856b 63%,
+        #394634 73%,
+        #77866d 83%,
+        #354230 92%,
+        #637158 100%
+      );
+      z-index: -1;
+    }
+
+    .curtain-left {
+      left: -5%;
+      transform-origin: left center;
+      clip-path: polygon(0 0, 100% 0, 93% 100%, 0 100%);
+      box-shadow: 25px 0 60px rgba(25,35,25,.5);
+    }
+
+    .curtain-right {
+      right: -5%;
+      transform-origin: right center;
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 7% 100%);
+      box-shadow: -25px 0 60px rgba(25,35,25,.5);
+    }
+
+    /* GOLD EDGE */
+    .curtain-left .gold-edge,
+    .curtain-right .gold-edge {
+      position: absolute;
+      top: 0;
+      height: 100%;
+      width: 3px;
+      background: linear-gradient(
+        to bottom,
+        #e2cb91,
+        #b79650,
+        #e0c889,
+        #b08d49
+      );
+      box-shadow: 0 0 10px rgba(224,200,137,.5);
+    }
+
+    .curtain-left .gold-edge {
+      right: 3%;
+    }
+
+    .curtain-right .gold-edge {
+      left: 3%;
+    }
+
+    /* TIEBACKS */
+    .tieback {
+      position: absolute;
+      top: 51%;
+      z-index: 15;
+      width: clamp(65px, 11vw, 105px);
+      height: clamp(9px, 1.5vw, 13px);
+      background: linear-gradient(90deg, #a9823c, #e2ca8c, #a9823c);
+      box-shadow: 0 3px 10px rgba(0,0,0,.25);
+      border-radius: 10px;
+    }
+
+    .tieback-left {
+      left: 0;
+      transform: rotate(-5deg);
+    }
+
+    .tieback-right {
+      right: 0;
+      transform: rotate(5deg);
+    }
+
+    .tieback::before {
+      content: "";
+      position: absolute;
+      top: clamp(-12px, -2vw, -13px);
+      width: clamp(27px, 4vw, 35px);
+      height: clamp(27px, 4vw, 35px);
+      border-radius: 50%;
+      background: radial-gradient(circle, #e3cd94 0%, #b48f4b 70%);
+      box-shadow: 0 3px 7px rgba(0,0,0,.25);
+    }
+
+    .tieback-left::before {
+      right: -12px;
+    }
+
+    .tieback-right::before {
+      left: -12px;
+    }
+
+    /* TASSEL */
+    .tassel {
+      position: absolute;
+      top: 53%;
+      width: clamp(13px, 2vw, 18px);
+      height: clamp(60px, 8vw, 90px);
+      background: linear-gradient(90deg, #9f7d40, #ead49a, #aa8747);
+      border-radius: 0 0 10px 10px;
+      z-index: 16;
+      box-shadow: 0 4px 12px rgba(0,0,0,.25);
+    }
+
+    .tassel-left {
+      left: clamp(45px, 9vw, 88px);
+    }
+
+    .tassel-right {
+      right: clamp(45px, 9vw, 88px);
+    }
+
+    /* CURTAIN CONTENT */
+    .curtain-content {
+      position: absolute;
+      z-index: 20;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      color: white;
+      padding: 20px;
+      transition: opacity .7s ease, transform 1.1s ease;
+    }
+
+    .curtain-inner {
+      width: min(600px, 88vw);
+      padding: 20px;
+    }
+
+    .curtain-leaf {
+      font-size: clamp(28px, 7vw, 40px);
+      color: #d5d9bd;
+      margin-bottom: 4px;
+    }
+
+    .curtain-title {
+      margin: 0 0 35px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(30px, 8vw, 70px);
+      line-height: 1.05;
+      font-weight: normal;
+      letter-spacing: clamp(4px, 1.5vw, 8px);
+      color: #f4f0db;
+      text-shadow: 0 4px 20px rgba(0,0,0,.35);
+      white-space: nowrap;
+    }
+
+    .curtain-rsvp {
+      margin: 0 0 14px;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(52px, 14vw, 95px);
+      line-height: .95;
+      font-weight: normal;
+      letter-spacing: clamp(3px, 1vw, 5px);
+      color: #eadcb5;
+      text-shadow: 0 5px 20px rgba(0,0,0,.35);
+    }
+
+    .curtain-subtitle {
+      margin: 0 0 28px;
+      color: #f2f0e3;
+      letter-spacing: clamp(2px, 1vw, 5px);
+      font-size: clamp(9px, 2.8vw, 14px);
+      line-height: 1.5;
+    }
+
+    /* OPEN INVITATION BUTTON */
+    .open-button {
+      width: min(270px, 80vw);
+      min-height: 54px;
+      padding: 13px 20px;
+      border-radius: 40px;
+      border: 1px solid #ead39b;
+      background: linear-gradient(135deg, #e3c887, #b99655);
+      color: #3d4434;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: clamp(13px, 3.5vw, 16px);
+      letter-spacing: clamp(2px, .8vw, 3px);
+      cursor: pointer;
+      box-shadow:
+        0 12px 30px rgba(0,0,0,.3),
+        inset 0 1px rgba(255,255,255,.7);
+      transition: transform .25s ease, box-shadow .25s ease;
+    }
+
+    .open-button:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 17px 35px rgba(0,0,0,.38);
+    }
+
+    .open-button:active {
+      transform: scale(.98);
+    }
+
+    /* CURTAIN OPEN */
+    #curtainScreen.opening .curtain-left {
+      transform: translateX(-108%) rotateY(22deg) rotateZ(-2deg) scaleX(.88);
+      filter: brightness(.8);
+    }
+
+    #curtainScreen.opening .curtain-right {
+      transform: translateX(108%) rotateY(-22deg) rotateZ(2deg) scaleX(.88);
+      filter: brightness(.8);
+    }
+
+    #curtainScreen.opening .curtain-content {
+      opacity: 0;
+      transform: translateZ(-250px) scale(.8);
+    }
+
+    #curtainScreen.opening .curtain-backdrop {
+      filter: brightness(1.15);
+    }
+
+    #curtainScreen.opened {
+      display: none;
+    }
+
+    /* MOBILE — 480px AND BELOW */
+    @media (max-width: 480px) {
+      .page {
+        min-height: 100svh;
+        padding: 18px 10px 38px;
+      }
+
+      .rsvp-card {
+        width: 100%;
+        padding: 30px 16px 36px;
+        border-radius: 22px;
+      }
+
+      .ornament {
+        gap: 9px;
+        margin-bottom: 8px;
+      }
+
+      .ornament-line {
+        width: 38px;
+      }
+
+      .rsvp-title {
+        width: min(330px, 88vw);
+        max-width: 100%;
+      }
+
+      .rsvp-subtitle {
+        font-size: 16px;
+        margin-top: 10px;
+      }
+
+      .heart {
+        margin: 16px 0 25px;
+        font-size: 25px;
+      }
+
+      .helper-text {
+        font-size: 13px;
+      }
+
+      input[type="text"],
+      select {
+        min-height: 54px;
+        border-radius: 12px;
+        padding: 14px;
+      }
+
+      textarea {
+        min-height: 110px;
+        border-radius: 12px;
+      }
+
+      .main-button {
+        min-height: 55px;
+        border-radius: 30px;
+      }
+
+      .invitation-button {
+        min-height: 55px;
+        border-radius: 30px;
+        font-size: 12px;
+        letter-spacing: 2px;
+      }
+
+      #seatMessage {
+        padding: 14px;
+        font-size: 18px;
+      }
+
+      .curtain {
+        width: 57%;
+        height: 108%;
+      }
+
+      .curtain-left {
+        left: -9%;
+      }
+
+      .curtain-right {
+        right: -9%;
+      }
+
+      .curtain-inner {
+        width: 82vw;
+        padding: 10px;
+      }
+
+      .curtain-leaf {
+        font-size: 30px;
+      }
+
+      .curtain-title {
+        font-size: 30px;
+        letter-spacing: 4px;
+        white-space: nowrap;
+      }
+
+      .curtain-rsvp {
+        font-size: 57px;
+        letter-spacing: 3px;
+        margin-bottom: 13px;
+      }
+
+      .curtain-subtitle {
+        font-size: 9px;
+        letter-spacing: 2px;
+        margin-bottom: 25px;
+      }
+
+      .open-button {
+        width: min(250px, 75vw);
+        min-height: 52px;
+        font-size: 13px;
+      }
+
+      .tieback {
+        top: 51%;
+        width: 65px;
+      }
+
+      .tassel-left {
+        left: 43px;
+      }
+
+      .tassel-right {
+        right: 43px;
+      }
+    }
+
+    /* VERY SMALL PHONES — 360px AND BELOW */
+    @media (max-width: 360px) {
+      .page {
+        padding: 12px 8px 30px;
+      }
+
+      .rsvp-card {
+        padding: 27px 13px 32px;
+        border-radius: 19px;
+      }
+
+      .rsvp-title {
+        width: min(290px, 88vw);
+        max-width: 100%;
+      }
+
+      .rsvp-subtitle {
+        font-size: 15px;
+      }
+
+      .ornament-line {
+        width: 30px;
+      }
+
+      label {
+        font-size: 15px;
+      }
+
+      .main-button {
+        font-size: 12px;
+        letter-spacing: 3px;
+      }
+
+      .invitation-button {
+        font-size: 11px;
+        letter-spacing: 1.5px;
+      }
+
+      .curtain-title {
+        font-size: 27px;
+        letter-spacing: 3px;
+        white-space: nowrap;
+      }
+
+      .curtain-rsvp {
+        font-size: 51px;
+      }
+
+      .curtain-subtitle {
+        font-size: 8px;
+        letter-spacing: 1.8px;
+      }
+
+      .open-button {
+        width: 220px;
+        font-size: 12px;
+      }
+
+      .tieback {
+        width: 57px;
+      }
+
+      .tassel-left {
+        left: 36px;
+      }
+
+      .tassel-right {
+        right: 36px;
+      }
+    }
+
+    /* LANDSCAPE MOBILE */
+    @media (max-height: 520px) and (orientation: landscape) {
+      .curtain-inner {
+        transform: scale(.72);
+      }
+
+      .curtain-title {
+        font-size: 28px;
+        white-space: nowrap;
+      }
+
+      .curtain-rsvp {
+        font-size: 50px;
+      }
+
+      .curtain-subtitle {
+        margin-bottom: 15px;
+      }
+
+      .open-button {
+        min-height: 44px;
+      }
+    }
+
+    /* REDUCED MOTION */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: .01ms !important;
+        animation-iteration-count: 1 !important;
+        scroll-behavior: auto !important;
+        transition-duration: .01ms !important;
+      }
+
+      .leaf-container {
+        display: none;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- FALLING LEAVES -->
+  <div class="leaf-container" id="leafContainer"></div>
+
+  <!-- 3D CURTAIN INTRO -->
+  <div id="curtainScreen">
+    <div class="curtain-backdrop"></div>
+
+    <div class="curtain curtain-left">
+      <div class="gold-edge"></div>
+    </div>
+
+    <div class="curtain curtain-right">
+      <div class="gold-edge"></div>
+    </div>
+
+    <div class="tieback tieback-left"></div>
+    <div class="tieback tieback-right"></div>
+
+    <div class="tassel tassel-left"></div>
+    <div class="tassel tassel-right"></div>
+
+    <div class="curtain-content">
+      <div class="curtain-inner">
+
+        <div class="curtain-leaf">❧</div>
+
+        <h1 class="curtain-title">
+          The Wedding of
+        </h1>
+
+        <div class="curtain-rsvp">
+          RALPH
+          <br>
+          &amp;
+          <br>
+          FRINCES
+        </div>
+
+        <p class="curtain-subtitle">
+          YOU ARE CORDIALLY INVITED
+        </p>
+
+        <button
+          type="button"
+          class="open-button"
+          onclick="openInvitation()">
+          OPEN INVITATION →
+        </button>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN RSVP PAGE -->
+  <main class="page">
+    <section class="rsvp-card">
+
+      <!-- TOP ORNAMENT -->
+      <div class="ornament">
+        <span class="ornament-line"></span>
+        <span class="ornament-leaf">❧</span>
+        <span class="ornament-line"></span>
+      </div>
+
+      <!-- TITLE / TRANSPARENT WEDDING MONOGRAM -->
+      <img
+        class="rsvp-title"
+        alt="Frinces and Ralph — 11.21.26"
+        src="data:image/png;base64,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">
+
+      <p class="rsvp-subtitle" id="rsvpSubtitle">
+        Every seat is reserved with love.
+        <br>
+        Kindly confirm your attendance below.
+      </p>
+
+      <span class="heart">♡</span>
+
+      <!-- STEP 1 — GUEST SEARCH -->
+      <div id="searchStep" class="form-wrapper">
+        <div class="form-group">
+          <label for="fullName">Guest Name</label>
+
+          <input
+            type="text"
+            id="fullName"
+            placeholder="Enter your full name"
+            autocomplete="name"
+            autocapitalize="words"
+            spellcheck="false">
+
+          <div class="helper-text">
+            Please enter your name as it appears on your invitation.
+          </div>
+        </div>
+
+        <button
+          type="button"
+          id="btnContinue"
+          class="main-button"
+          onclick="handleContinue()">
+          CONTINUE
+        </button>
+      </div>
+
+      <!-- STEP 2 — RSVP DETAILS -->
+      <div id="rsvpStep" class="form-wrapper hidden">
+        <p id="roleGreeting" aria-live="polite"></p>
+        <p id="seatMessage"></p>
+
+        <div class="form-group">
+          <label for="response">Will you attend?</label>
+
+          <select id="response">
+            <option value="">Please select an option</option>
+            <option value="Joyfully Accepts">Joyfully Accepts</option>
+            <option value="Regretfully Declines">Regretfully Declines</option>
+          </select>
+        </div>
+
+        <div id="additionalGuestsContainer"></div>
+
+        <div class="form-group">
+          <label for="comment">Message</label>
+
+          <textarea
+            id="comment"
+            rows="4"
+            placeholder="Leave a message for the couple..."></textarea>
+        </div>
+
+        <button
+          type="button"
+          id="btnSubmit"
+          class="main-button"
+          onclick="handleSubmit()">
+          SUBMIT RSVP
+        </button>
+      </div>
+
+      <!-- STATUS -->
+      <div id="statusMessage" class="message"></div>
+
+      <!-- FORMAL INVITATION: ACCEPTING GUESTS ONLY -->
+      <a
+        id="formalInvitationButton"
+        class="invitation-button"
+        href="https://ralphandces.canva.link/formalinvitation"
+        target="_blank"
+        rel="noopener noreferrer">
+        VIEW FORMAL INVITATION →
+      </a>
+
+    </section>
+  </main>
+
+  <!-- JAVASCRIPT -->
+  <script>
+    /* OPEN CURTAIN */
+    function openInvitation() {
+      const curtain = document.getElementById('curtainScreen');
+      if (!curtain) return;
+
+      curtain.classList.add('opening');
+
+      setTimeout(function() {
+        curtain.classList.add('opened');
+
+        const nameInput = document.getElementById('fullName');
+
+        if (nameInput) {
+          setTimeout(function() {
+            nameInput.focus();
+          }, 100);
+        }
+      }, 1950);
+    }
+
+    /* FALLING LEAVES */
+    function createLeaves() {
+      const container = document.getElementById('leafContainer');
+      if (!container) return;
+
+      const colors = [
+        '#8d9b7d',
+        '#aeb99e',
+        '#c6b785',
+        '#d2c397',
+        '#758569'
+      ];
+
+      let leafCount;
+
+      if (window.innerWidth <= 360) {
+        leafCount = 7;
+      } else if (window.innerWidth <= 600) {
+        leafCount = 10;
+      } else {
+        leafCount = 22;
+      }
+
+      for (let i = 0; i < leafCount; i++) {
+        const leaf = document.createElement('div');
+        leaf.className = 'leaf';
+
+        leaf.style.left = Math.random() * 100 + 'vw';
+
+        leaf.style.animationDuration =
+          (Math.random() * 7 + 7) + 's';
+
+        leaf.style.animationDelay =
+          Math.random() * 10 + 's';
+
+        leaf.style.backgroundColor =
+          colors[Math.floor(Math.random() * colors.length)];
+
+        const size = Math.random() * 9 + 8;
+
+        leaf.style.width = size + 'px';
+        leaf.style.height = (size * 1.4) + 'px';
+
+        container.appendChild(leaf);
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', createLeaves);
+
+    /* GUEST DATA */
+    let guestData = {};
+
+    /* SHOW MESSAGE */
+    function showMessage(text, isError) {
+      const msgDiv = document.getElementById('statusMessage');
+      if (!msgDiv) return;
+
+      msgDiv.innerText = text || '';
+
+      msgDiv.className = isError
+        ? 'message error'
+        : 'message success';
+    }
+
+    /* CLEAR MESSAGE */
+    function clearMessage() {
+      const msgDiv = document.getElementById('statusMessage');
+      if (!msgDiv) return;
+
+      msgDiv.innerText = '';
+      msgDiv.className = 'message';
+    }
+
+    /* SEARCH GUEST */
+    function handleContinue() {
+      const input = document.getElementById('fullName');
+      if (!input) return;
+
+      const nameInput = input.value.trim();
+
+      if (!nameInput) {
+        showMessage('Please enter your name.', true);
+        input.focus();
+        return;
+      }
+
+      const btn = document.getElementById('btnContinue');
+
+      btn.disabled = true;
+      btn.innerText = 'SEARCHING...';
+
+      clearMessage();
+
+      google.script.run
+        .withSuccessHandler(function(result) {
+          btn.disabled = false;
+          btn.innerText = 'CONTINUE';
+
+          if (result && result.found) {
+            guestData = result;
+
+            document.getElementById('searchStep')
+              .classList.add('hidden');
+
+            document.getElementById('rsvpStep')
+              .classList.remove('hidden');
+
+            document.getElementById('seatMessage').innerText =
+              result.message || '';
+
+            // Display a centered personalized greeting based on the guest's role.
+            const roleGreeting = document.getElementById('roleGreeting');
+            if (roleGreeting) {
+              const role = String(
+                result.role || result.Role || result.guestRole || ''
+              ).trim().toLowerCase();
+
+              const roleMessages = {
+                'groomsmen': '"You are one of Our Handsome Groomsmen"',
+                'bridesmaid': '"You are one of Our Gorgeous Bridesmaid"',
+                'bestman': '"Hi My Brother"',
+                'best man': '"Hi My Brother"',
+                'maid of honor': '"Hi My Fabulous Maid of Honor"',
+                'maid of honour': '"Hi My Fabulous Maid of Honor"',
+                'sponsor': '"Hi My Dearest Godparent"',
+                'mother': '"Hi My Lovely Mother"',
+                'father': '"Hi My Handsome Father"'
+              };
+
+              const greeting = roleMessages[role] || '';
+              roleGreeting.textContent = greeting;
+              roleGreeting.style.display = greeting ? 'block' : 'none';
+            }
+
+            createAdditionalGuests(result.additionalGuests || 0);
+
+            const invitationButton =
+              document.getElementById('formalInvitationButton');
+
+            if (invitationButton) {
+              invitationButton.style.display = 'none';
+            }
+
+            if (window.innerWidth <= 600) {
+              setTimeout(function() {
+                document.getElementById('rsvpStep')
+                  .scrollIntoView({
+                    behavior: 'smooth',
+                    block: 'start'
+                  });
+              }, 150);
+            }
+          } else {
+            showMessage(
+              result && result.message
+                ? result.message
+                : 'You are not listed.',
+              true
+            );
+          }
+        })
+        .withFailureHandler(function(error) {
+          btn.disabled = false;
+          btn.innerText = 'CONTINUE';
+
+          showMessage(
+            'Error: ' +
+            (error && error.message
+              ? error.message
+              : 'Unable to search for guest.'),
+            true
+          );
+        })
+        .checkGuest(nameInput);
+    }
+
+    /* CREATE ADDITIONAL GUEST INPUTS */
+    function createAdditionalGuests(count) {
+      const container =
+        document.getElementById('additionalGuestsContainer');
+
+      container.innerHTML = '';
+
+      if (!count || count <= 0) {
+        return;
+      }
+
+      const heading = document.createElement('h3');
+      heading.innerText = 'Additional Guest Names';
+      container.appendChild(heading);
+
+      for (let i = 0; i < count; i++) {
+        const group = document.createElement('div');
+        group.className = 'form-group';
+
+        const label = document.createElement('label');
+        label.innerText = 'Guest ' + (i + 1) + ' Full Name';
+
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.className = 'additional-guest-input';
+        input.placeholder = 'Guest ' + (i + 1);
+        input.autocomplete = 'off';
+        input.autocapitalize = 'words';
+
+        group.appendChild(label);
+        group.appendChild(input);
+        container.appendChild(group);
+      }
+    }
+
+    /* SUBMIT RSVP */
+    function handleSubmit() {
+      const response = document.getElementById('response');
+      if (!response) return;
+
+      const responseVal = response.value;
+
+      if (!responseVal) {
+        showMessage(
+          'Please select whether you will attend.',
+          true
+        );
+        response.focus();
+        return;
+      }
+
+      const isJoyfullyAccepted =
+        responseVal === 'Joyfully Accepts';
+
+      const btn = document.getElementById('btnSubmit');
+
+      btn.disabled = true;
+      btn.innerText = 'SUBMITTING...';
+
+      clearMessage();
+
+      const invitationButton =
+        document.getElementById('formalInvitationButton');
+
+      if (invitationButton) {
+        invitationButton.style.display = 'none';
+      }
+
+      const guestInputs =
+        document.querySelectorAll('.additional-guest-input');
+
+      const additionalGuests = [];
+
+      guestInputs.forEach(function(input) {
+        const value = input.value.trim();
+
+        if (value !== '') {
+          additionalGuests.push(value);
+        }
+      });
+
+      const submissionData = {
+        fullName: guestData.name,
+        // Preserve the guest's existing role when submitting the RSVP.
+        // This passes the role returned by checkGuest() to submitRSVP().
+        role: guestData.role || guestData.Role || guestData.guestRole || '',
+        response: responseVal,
+        comment: document.getElementById('comment').value.trim(),
+        additionalGuests: additionalGuests
+      };
+
+      google.script.run
+        .withSuccessHandler(function(result) {
+          btn.disabled = false;
+          btn.innerText = 'SUBMIT RSVP';
+
+          if (result && result.success) {
+            document.getElementById('rsvpStep')
+              .classList.add('hidden');
+
+            /*
+             * UPDATED SUBTITLE:
+             * Joyfully Accepts: invitation message.
+             * Regretfully Declines: "Enjoy".
+             */
+            const rsvpSubtitle =
+              document.getElementById('rsvpSubtitle');
+
+            if (rsvpSubtitle) {
+              if (isJoyfullyAccepted) {
+                rsvpSubtitle.textContent =
+                  '"Your presence would mean the world to us.\n' +
+                  'Please tap the button below to view our official wedding invitation."';
+              } else {
+                rsvpSubtitle.textContent = 
+                '"We regret that you cannot attend, we entirely understand.\n' +
+                'We wish you all the best and hope to see you another time."';
+              }
+
+              rsvpSubtitle.style.whiteSpace = 'pre-line';
+            }
+
+            showMessage(
+              result.message ||
+              'Your RSVP has been submitted successfully.',
+              false
+            );
+
+            /*
+             * Show the formal invitation button
+             * ONLY for Joyfully Accepts.
+             */
+            if (isJoyfullyAccepted && invitationButton) {
+              invitationButton.style.display = 'flex';
+            }
+          } else {
+            showMessage(
+              result && result.message
+                ? result.message
+                : 'Unable to submit your RSVP.',
+              true
+            );
+          }
+        })
+        .withFailureHandler(function(error) {
+          btn.disabled = false;
+          btn.innerText = 'SUBMIT RSVP';
+
+          showMessage(
+            'Submission Error: ' +
+            (error && error.message
+              ? error.message
+              : 'Unable to submit RSVP.'),
+            true
+          );
+        })
+        .submitRSVP(submissionData);
+    }
+
+    /* ENTER KEY — GUEST NAME */
+    document.addEventListener('DOMContentLoaded', function() {
+      const nameInput = document.getElementById('fullName');
+      if (!nameInput) return;
+
+      nameInput.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter') {
+          event.preventDefault();
+          handleContinue();
+        }
+      });
+    });
+  </script>
+
+</body>
+</html>
